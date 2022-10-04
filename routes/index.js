@@ -12,13 +12,15 @@ router.post('/addtransaction', async (req,res) => {
   const db = await client.db('users');
 
   try{
-  const data = await db.collection('Expense_Tracker').insertOne(req.body[0]);
+  if(req.body) {
+  const data = await db.collection('Expense_Tracker').insertOne(req.body);
   console.log({data});
   res.json({
     status: 200,
     message : "Data added successfully",
     data: data
   })
+}
 }catch(err){
   res.json({
     status: 404,
@@ -62,6 +64,9 @@ router.get('/gettransactions', async (req, res) => {
   const db = await client.db('users');
   try{
     const data = await db.collection('Expense_Tracker').find().toArray();
+    data.sort((a,b) => {
+      b.date - a.date
+    });
     // console.log({data});
     res.json({
       status: 200,
@@ -75,7 +80,5 @@ router.get('/gettransactions', async (req, res) => {
     })
   }
 })
-
-
 
 module.exports = router;
